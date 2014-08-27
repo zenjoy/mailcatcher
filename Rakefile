@@ -3,6 +3,22 @@ require "rubygems"
 
 require "mail_catcher/version"
 
+require "bundler/gem_tasks"
+
+module Bundler
+  class GemHelper
+    unless method_defined?(:rubygem_push)
+      raise NoMethodError, "Monkey patching Bundler::GemHelper#rubygem_push failed: did the Bundler API change???"
+    end
+
+    def rubygem_push(path)
+      sh %{gem inabox #{path}}
+
+      Bundler.ui.confirm "Pushed #{name} #{version}"
+    end
+  end
+end
+
 # XXX: Would prefer to use Rake::SprocketsTask but can't populate
 # non-digest assets, and we don't want sprockets at runtime so
 # can't use manifest directly. Perhaps index.html should be
@@ -34,11 +50,6 @@ task "package" => ["assets"] do
   spec = Gem::Specification.load(spec_file)
 
   Gem::Package.build spec
-end
-
-desc "Release Gem to RubyGems"
-task "release" => ["package"] do
-  %x[gem push mailcatcher-#{MailCatcher::VERSION}.gem]
 end
 
 require "rdoc/task"
