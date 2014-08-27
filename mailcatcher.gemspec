@@ -50,4 +50,5 @@ Gem::Specification.new do |s|
   s.add_development_dependency "sprockets-sass"
   s.add_development_dependency "sprockets-helpers"
   s.add_development_dependency "uglifier"
+  s.add_development_dependency "geminabox"
 end
